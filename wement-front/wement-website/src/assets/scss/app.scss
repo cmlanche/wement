@@ -49,3 +49,60 @@
 
 @include motion-ui-transitions;
 @include motion-ui-animations;
+
+body{
+  background-color: #8a8a8a;
+}
+
+.title-bar{
+  .title-bar-left{
+    span{
+      font-size: 24px;
+      font-family: fantasy;
+      padding-left: 16px;
+    }
+  }
+
+  .title-bar-right{
+    a{
+      font-size: 24px;
+      padding-right: 16px;
+      font-family: fantasy;
+    }
+  }
+}
+
+.main-section{
+  width: 800px;
+  min-height: 800px;
+  margin: auto;
+  background-color: white;
+
+  .row{
+    padding: 16px;
+
+    .title{
+
+      .label{
+        font-family: fantasy;
+        font-size: 1.2rem;
+      }
+    }
+
+    .content{
+      margin-top: 8px;
+      p{
+        color: #333333;
+        font-family: sans-serif;
+
+        em{
+          font-weight: bold;
+        }
+      }
+    }
+
+    .badge{
+      background-color: red;
+    }
+  }
+}
