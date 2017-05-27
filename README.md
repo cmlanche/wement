@@ -1,6 +1,6 @@
 ### What is wement.io
 
-Wement.io is a common comment system for all users whoever wants to quickly have a comment system. It has a shared powerfull server to provide data storage service. and it provide user ad service to ensure the benefits of users.
+Wement.io is a common comment system for all users whoever wants to quickly have a comment system. It has a shared powerful server to provide data storage service. and it provide user ad service to ensure the benefits of users.
 
 ### Comment plugin
 
