@@ -56,10 +56,16 @@ body{
 
 .title-bar{
   .title-bar-left{
-    span{
-      font-size: 24px;
-      font-family: fantasy;
-      padding-left: 16px;
+    .menu{
+      .menu-text{
+        font-size: 24px;
+        font-family: fantasy;
+        padding-left: 16px;
+      }
+      li{
+        font-size: 18px;
+        font-family: fantasy;
+      }
     }
   }
 
