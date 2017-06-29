@@ -5,7 +5,9 @@
 @import 'motion-ui';
 
 @include foundation-global-styles;
-@include foundation-grid;
+//@include foundation-grid;
+@include foundation-flex-classes;
+@include foundation-flex-grid;
 // @include foundation-flex-grid;
 @include foundation-typography;
 @include foundation-button;
@@ -55,6 +57,7 @@ body{
 }
 
 .title-bar{
+  width: 100%;
   .title-bar-left{
     .menu{
       .menu-text{
@@ -74,6 +77,10 @@ body{
       font-size: 24px;
       padding-right: 16px;
       font-family: fantasy;
+      img{
+        width: 1.5rem;
+        height: 1.5rem;
+      }
     }
   }
 }
@@ -109,6 +116,25 @@ body{
 
     .badge{
       background-color: red;
+    }
+
+    .userhead{
+    }
+
+    .nickname{
+      font-size: 2rem;
+      font-style: oblique;
+      font-weight: bold;
+    }
+
+    .email{
+      font-size: 1rem;
+      font-style: normal;
+      font-weight: normal;
+    }
+
+    .logout{
+      margin-top: 12px;
     }
   }
 }
