@@ -83,7 +83,7 @@ function ajaxFactory(method) {
         } else {
           resolve(data)
         }
-      })
+      });
       req.addEventListener('error', error => reject(error))
     });
     req.open(method, url, true);
@@ -106,4 +106,4 @@ export const http = {
   post: ajaxFactory('POST'),
   delete: ajaxFactory('DELETE'),
   put: ajaxFactory('PUT'),
-}
+};
