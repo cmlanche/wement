@@ -1,15 +1,41 @@
 <html>
   <head>
+      <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <title>get started</title>
+      <style>
+          body {
+              width: 600px;
+              margin: auto;
+              text-align:center;
+              border:1px solid #000;
+              background-color: white;
+          }
+      </style>
+      <link type="text/css" href="index.css" rel="stylesheet">
   </head>
   <body>
-    <div class="wm-comment">
-        <div class="wm-input">
-            <span class="user" id="wm-user-info">user not login</span>
-            <input type="text" id="wm-content-input" placeholder="your comment">
-            <input type="button" id="wm-add-comment-btn" value="commit">
+    <div class="wm-comment" id="wm_comment">
+        <div class="wm-comment-header">
         </div>
-        <div class="wm-comments" id="wm_comments">
+        <div class="wm-input">
+            <div class="wm-user">
+                <img class="wm-user-headimage" id="wm-user-headimage" src="wm_default_headimage.jpg">
+            </div>
+            <div class="wm-textarea">
+                <textarea class="wm-content-textarea" id="wm-content-textarea" rows="2" placeholder="写下你的评论..."></textarea>
+            </div>
+        </div>
+        <div class="wm-commit">
+            <div class="wm-blank">
+            </div>
+            <div class="wm-commit-btns">
+                <button class="wm-cancel-comment-btn" id="wm-cancel-comment-btn" type="button">取消</button>
+                <button class="wm-add-comment-btn" id="wm-add-comment-btn" type="button">提交</button>
+            </div>
+        </div>
+        <div class="wm-seperator">
+        </div>
+        <div class="wm-comment-item">
         </div>
     </div>
     <script src="./dist/wement.js"></script>
