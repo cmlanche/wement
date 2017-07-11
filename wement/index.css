@@ -184,6 +184,11 @@
 
 .wm-comment-user-content-bottom span a{
     margin: auto 0 auto 2px;
+    text-decoration: none;
+    color: #808080;
+}
+.wm-comment-user-content-bottom span a:hover{
+    color: #333;
 }
 
 .wm-comment-user-content-bottom{

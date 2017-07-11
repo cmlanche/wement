@@ -77,7 +77,8 @@ function wm_setWementInfo(data) {
  */
 function wm_addComment() {
     if(wm_wement){
-        let content = document.getElementById("wm-content-textarea").value;
+        let dom_editor = document.getElementById("wm-content-textarea");
+        let content = dom_editor.value;
         http.post("/comment/add", {
             "websiteId": wm_getWebsiteId(),
             "domain": document.location.host,
@@ -88,6 +89,8 @@ function wm_addComment() {
                 let json = JSON.parse(res);
                 if(json.code == 0){
                     wm_log("add comment success");
+                    dom_editor.value = "";
+                    wm_ui_addcomment(document.getElementById("wm_comment"), json);
                 }else{
                     wm_log("add comment failed, case:" + res);
                 }
@@ -101,9 +104,28 @@ function wm_addComment() {
 /**
  * 删除一条评论
  */
-function wm_delComment(e, id) {
-    alert("ddd");
-}
+window.wm_delComment = function (e, id) {
+    let confirm = window.confirm("确定要删除这条评论吗？");
+    if(confirm){
+        http.post("/comment/delete", {
+            "_id": id
+        }).then(res=>{
+            if(res){
+                let json = JSON.parse(res);
+                if(json.code == 0){
+                    let dom_comment = document.getElementById("wm_comment");
+                    if(dom_comment){
+                        dom_comment.removeChild(document.getElementById(id));
+                    }
+                    wm_log("delete comment success");
+                }else{
+                    wm_log("delete comment failed, case: " + res);
+                }
+            }
+        });
+    }else{
+    }
+};
 
 /**
  * 获取当前页面评论列表
@@ -118,33 +140,49 @@ function wm_getComments() {
             if(json.code == 0){
                 let dom_comment = document.getElementById("wm_comment");
                 for(let comment of json.comments){
-                    wm_log(comment);
-                    let content = comment.content;
-                    let dom_comment_item = document.createElement("div");
-                    dom_comment_item.className = "wm-comment-item";
+                    wm_ui_addcomment(dom_comment, comment);
+                }
+                wm_log("get comments success");
+            }else{
+                wm_log("get comments failed, case:" + res);
+            }
+        });
+    }
+}
 
-                    // 添加头像
-                    let dom_comment_user = document.createElement("div");
-                    dom_comment_user.className = "wm-user";
-                    let dom_comment_userimage = document.createElement("img");
-                    dom_comment_userimage.className = "wm-user-headimage";
-                    dom_comment_userimage.src = "wm_default_headimage.jpg";
-                    dom_comment_user.appendChild(dom_comment_userimage);
+/**
+ * 添加一条评论
+ * @param e
+ * @param comment
+ */
+function wm_ui_addcomment(e, comment) {
+    wm_log(comment);
+    let content = comment.content;
+    let dom_comment_item = document.createElement("div");
+    dom_comment_item.className = "wm-comment-item";
+    dom_comment_item.id = comment._id;
 
-                    // 添加评论内容
-                    let dom_comment_content = document.createElement("div");
-                    dom_comment_content.className = "wm-comment-content";
+    // 添加头像
+    let dom_comment_user = document.createElement("div");
+    dom_comment_user.className = "wm-user";
+    let dom_comment_userimage = document.createElement("img");
+    dom_comment_userimage.className = "wm-user-headimage";
+    dom_comment_userimage.src = "wm_default_headimage.jpg";
+    dom_comment_user.appendChild(dom_comment_userimage);
 
-                    let feedback;
-                    if(wm_wement.user._id != comment.wmUserid){
-                        feedback = `<a>回复</a>
-                                    <a>赞</a>
-                                    <a>举报</a>`;
-                    }else{
-                        feedback = `<a href="javascript:void(0)" onclick="wm_getWementInfo();">删除</a>`;
-                    }
-                    dom_comment_content.innerHTML =
-                        `<div class="wm-user-name">
+    // 添加评论内容
+    let dom_comment_content = document.createElement("div");
+    dom_comment_content.className = "wm-comment-content";
+
+    let feedback;
+    if(wm_wement.user._id != comment.wmUserid){
+        feedback = `<a>回复</a>
+                                    <a>赞</a>`;
+    }else{
+        feedback = `<a href="javascript:void(0)" onclick="wm_delComment(this, '${comment._id}')">删除</a>`;
+    }
+    dom_comment_content.innerHTML =
+        `<div class="wm-user-name">
                              cmlanche
                         </div>
                         <div class="wm-comment-user-content">
@@ -158,17 +196,10 @@ function wm_getComments() {
                             </div>
                         </div>`;
 
-                    dom_comment_item.appendChild(dom_comment_user);
-                    dom_comment_item.appendChild(dom_comment_content);
+    dom_comment_item.appendChild(dom_comment_user);
+    dom_comment_item.appendChild(dom_comment_content);
 
-                    dom_comment.appendChild(dom_comment_item);
-                }
-                wm_log("get comments success");
-            }else{
-                wm_log("get comments failed, case:" + res);
-            }
-        });
-    }
+    e.appendChild(dom_comment_item);
 }
 
 function wm_getWebsiteId() {
