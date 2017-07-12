@@ -62,13 +62,14 @@ function wm_log(msg) {
  * @param userinfo
  */
 function wm_setWementInfo(data) {
-    wm_wement = JSON.parse(data);
-    if(wm_wement.code === -1){
+    if(data.code == -1){
         // unauth
         wm_requestAuth();
-    }else if(wm_wement.code == 0){
+    }else if(data.code == 0){
         wm_log("success");
         document.getElementById("wm-user-headimage").src = wm_wement.user.headimage;
+    } else {
+        wm_log(data.message);
     }
 }
 

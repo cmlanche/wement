@@ -78,9 +78,7 @@ function ajaxFactory(method) {
           return
         }
         const data = req.responseText ? JSON.parse(res) : {};
-        if (data.message) {
-          reject(new Error(data.message))
-        } else {
+        if (data) {
           resolve(data)
         }
       });
