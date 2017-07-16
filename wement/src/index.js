@@ -1,31 +1,84 @@
 
 import {http, wm_getCookie} from './utils.js'
+import * as autosize from './autosize.js';
 
 // http.get('/test').then(data=>{
 //     console.log(data)
 // });
 
+function init() {
+    let html = `<div class="wm-comment-header">
+        </div>
+        <div class="wm-input">
+            <div class="wm-user">
+                <img class="wm-user-headimage" id="wm-user-headimage" src="wm_default_headimage.jpg">
+            </div>
+            <div class="wm-textarea">
+                <textarea class="wm-content-textarea" id="wm-content-textarea" rows="1" placeholder="写下你的评论..."></textarea>
+            </div>
+        </div>
+        <div class="wm-commit" id="wm-commit">
+            <div class="wm-blank">
+            </div>
+            <div class="wm-commit-btns">
+                <button class="wm-cancel-comment-btn" id="wm-cancel-comment-btn" type="button">取消</button>
+                <button class="wm-add-comment-btn" id="wm-add-comment-btn" type="button">提交</button>
+            </div>
+        </div>
+        <div class="wm-seperator">
+        </div>
+        <div class="wm-comment-item">
+        </div>`;
+    let wm_comment = document.getElementById("wm_comment");
+    wm_comment.innerHTML = html;
+
+    let wm_textarea = document.getElementById("wm-content-textarea");
+    let wm_commit = document.getElementById("wm-commit");
+    wm_commit.style.display = "none";
+
+    wm_textarea.onfocus = function () {
+        if(wm_commit.style.display == "none"){
+            wm_commit.style.display = "table-row";
+        }
+    };
+
+    let wm_cancel_comment_btn = document.getElementById("wm-cancel-comment-btn");
+    wm_cancel_comment_btn.onclick = function () {
+        wm_commit.style.display = "none";
+    };
+
+    autosize(wm_textarea);
+}
+
+init();
+
 let wm_token = wm_getCookie("wm_token");
 let wm_debug = true;
 let wm_wement;
-let wm_appid = "8659f72674440553f1ee7890cc25a4b1";
-
-// check token
-
-if(wm_token){
-    wm_log("i got token, it is " + wm_token);
-    wm_getWementInfo();
-} else {
-    wm_log("no token yet, request it");
-    wm_requestAuth();
+let wm_appid;
+if((typeof wement) == "undefined" || (typeof wement.appid) == "undefined" || wement.appid == ""){
+    wm_appid = undefined;
+}else{
+    wm_appid = wement.appid;
 }
 
-document.getElementById("wm-add-comment-btn").onclick = function (e) {
-    wm_log("commit btn clicked");
-    wm_addComment();
-};
+if(wm_appid != undefined){
+    // check token
+    if(wm_token){
+        wm_log("i got token, it is " + wm_token);
+        wm_getWementInfo();
+    } else {
+        wm_log("no token yet, request it");
+        wm_requestAuth();
+    }
 
-wm_autofit_textarea(document.getElementById("wm-content-textarea"));
+    document.getElementById("wm-add-comment-btn").onclick = function (e) {
+        wm_log("commit btn clicked");
+        wm_addComment();
+    };
+}else{
+    alert("请设置wement.io的appid");
+}
 
 /**
  * 请求授权
@@ -45,7 +98,6 @@ function wm_getWementInfo() {
     http.post("/wementinfo", {"appid": wm_appid, "domain": document.location.host}).then(data=>{
         if(data){
             wm_setWementInfo(data);
-            wm_getComments();
         }
         wm_log(data);
     })
@@ -67,7 +119,9 @@ function wm_setWementInfo(data) {
         wm_requestAuth();
     }else if(data.code == 0){
         wm_log("success");
+        wm_wement = data;
         document.getElementById("wm-user-headimage").src = wm_wement.user.headimage;
+        wm_getComments();
     } else {
         wm_log(data.message);
     }
@@ -80,21 +134,22 @@ function wm_addComment() {
     if(wm_wement){
         let dom_editor = document.getElementById("wm-content-textarea");
         let content = dom_editor.value;
+        if(content.trim() == "") {
+            alert("评论内容不能为空");
+            return
+        }
         http.post("/comment/add", {
             "websiteId": wm_getWebsiteId(),
             "domain": document.location.host,
             "postUrl": document.location.href,
             "content": content
         }).then(res=>{
-            if(res){
-                let json = JSON.parse(res);
-                if(json.code == 0){
-                    wm_log("add comment success");
-                    dom_editor.value = "";
-                    wm_ui_addcomment(document.getElementById("wm_comment"), json);
-                }else{
-                    wm_log("add comment failed, case:" + res);
-                }
+            if(res.code == 0){
+                wm_log("add comment success");
+                dom_editor.value = "";
+                wm_ui_addcomment(document.getElementById("wm_comment"), res);
+            }else{
+                wm_log("add comment failed, case:" + res);
             }
         });
     }else{
@@ -109,19 +164,16 @@ window.wm_delComment = function (e, id) {
     let confirm = window.confirm("确定要删除这条评论吗？");
     if(confirm){
         http.post("/comment/delete", {
-            "_id": id
+            "id": id
         }).then(res=>{
-            if(res){
-                let json = JSON.parse(res);
-                if(json.code == 0){
-                    let dom_comment = document.getElementById("wm_comment");
-                    if(dom_comment){
-                        dom_comment.removeChild(document.getElementById(id));
-                    }
-                    wm_log("delete comment success");
-                }else{
-                    wm_log("delete comment failed, case: " + res);
+            if(res.code == 0){
+                let dom_comment = document.getElementById("wm_comment");
+                if(dom_comment){
+                    dom_comment.removeChild(document.getElementById(id));
                 }
+                wm_log("delete comment success");
+            }else{
+                wm_log("delete comment failed, case: " + res);
             }
         });
     }else{
@@ -137,10 +189,9 @@ function wm_getComments() {
             "websiteId": wm_getWebsiteId(),
             "postUrl": document.location.href
         }).then(res=>{
-            let json = JSON.parse(res);
-            if(json.code == 0){
+            if(res.code == 0){
                 let dom_comment = document.getElementById("wm_comment");
-                for(let comment of json.comments){
+                for(let comment of res.comments){
                     wm_ui_addcomment(dom_comment, comment);
                 }
                 wm_log("get comments success");
@@ -161,26 +212,23 @@ function wm_ui_addcomment(e, comment) {
     let content = comment.content;
     let dom_comment_item = document.createElement("div");
     dom_comment_item.className = "wm-comment-item";
-    dom_comment_item.id = comment._id;
+    dom_comment_item.id = comment.id;
 
     // 添加头像
     let dom_comment_user = document.createElement("div");
     dom_comment_user.className = "wm-user";
-    let dom_comment_userimage = document.createElement("img");
-    dom_comment_userimage.className = "wm-user-headimage";
-    dom_comment_userimage.src = "wm_default_headimage.jpg";
-    dom_comment_user.appendChild(dom_comment_userimage);
+    dom_comment_user.innerHTML = `<a href="${comment.homepage}" target="_blank"><img class="wm-user-headimage" src="${comment.headimage}"></a>`;
 
     // 添加评论内容
     let dom_comment_content = document.createElement("div");
     dom_comment_content.className = "wm-comment-content";
 
     let feedback;
-    if(wm_wement.user._id != comment.wmUserid){
+    if(wm_wement.user.id != comment.userid){
         feedback = `<a>回复</a>
-                                    <a>赞</a>`;
+                    <a>赞</a>`;
     }else{
-        feedback = `<a href="javascript:void(0)" onclick="wm_delComment(this, '${comment._id}')">删除</a>`;
+        feedback = `<a href="javascript:void(0)" onclick="wm_delComment(this, '${comment.id}')">删除</a>`;
     }
     dom_comment_content.innerHTML =
         `<div class="wm-user-name">
@@ -189,7 +237,7 @@ function wm_ui_addcomment(e, comment) {
                         <div class="wm-comment-user-content">
                             <p>${content}</p>
                             <div class="wm-comment-user-content-bottom">
-                                <time>2年前<time/>
+                                <time>${comment.createdtime}<time/>
                                 <span>
                                     ${feedback}
                                 </span>
@@ -204,68 +252,5 @@ function wm_ui_addcomment(e, comment) {
 }
 
 function wm_getWebsiteId() {
-    return wm_wement.website._id;
+    return wm_wement.website.id;
 }
-
-function wm_autofit_textarea(elem, extra, maxHeight) {
-    extra = extra || 0;
-    var isFirefox = !!document.getBoxObjectFor || 'mozInnerScreenX' in window,
-        isOpera = !!window.opera && !!window.opera.toString().indexOf('Opera'),
-        addEvent = function (type, callback) {
-            elem.addEventListener ?
-                elem.addEventListener(type, callback, false) :
-                elem.attachEvent('on' + type, callback);
-        },
-        getStyle = elem.currentStyle ? function (name) {
-                var val = elem.currentStyle[name];
-
-                if (name === 'height' && val.search(/px/i) !== 1) {
-                    var rect = elem.getBoundingClientRect();
-                    return rect.bottom - rect.top -
-                        parseFloat(getStyle('paddingTop')) -
-                        parseFloat(getStyle('paddingBottom')) + 'px';
-                };
-
-                return val;
-            } : function (name) {
-                return getComputedStyle(elem, null)[name];
-            },
-        minHeight = parseFloat(getStyle('height'));
-
-    elem.style.resize = 'none';
-
-    var change = function () {
-        var scrollTop, height,
-            padding = 0,
-            style = elem.style;
-
-        if (elem._length === elem.value.length) return;
-        elem._length = elem.value.length;
-
-        if (!isFirefox && !isOpera) {
-            padding = parseInt(getStyle('paddingTop')) + parseInt(getStyle('paddingBottom'));
-        };
-        scrollTop = document.body.scrollTop || document.documentElement.scrollTop;
-
-        elem.style.height = minHeight + 'px';
-        if (elem.scrollHeight > minHeight) {
-            if (maxHeight && elem.scrollHeight > maxHeight) {
-                height = maxHeight - padding;
-                style.overflowY = 'auto';
-            } else {
-                height = elem.scrollHeight - padding;
-                style.overflowY = 'hidden';
-            };
-            style.height = height + extra + 'px';
-            scrollTop += parseInt(style.height) - elem.currHeight;
-            document.body.scrollTop = scrollTop;
-            document.documentElement.scrollTop = scrollTop;
-            elem.currHeight = parseInt(style.height);
-        };
-    };
-
-    addEvent('propertychange', change);
-    addEvent('input', change);
-    addEvent('focus', change);
-    change();
-};

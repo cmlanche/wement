@@ -77,7 +77,7 @@ function ajaxFactory(method) {
           resolve(res);
           return
         }
-        const data = req.responseText ? JSON.parse(res) : {};
+        const data = JSON.parse(res);
         if (data) {
           resolve(data)
         }
