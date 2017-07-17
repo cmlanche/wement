@@ -230,9 +230,13 @@ function wm_ui_addcomment(e, comment) {
     }else{
         feedback = `<a href="javascript:void(0)" onclick="wm_delComment(this, '${comment.id}')">删除</a>`;
     }
+    let homepagehost = "";
+    if(comment.homepage && comment.homepagehost != ""){
+        homepagehost = `<a href='${comment.homepage}' target="_blank">${comment.homepagehost}</a>`;
+    }
     dom_comment_content.innerHTML =
         `<div class="wm-user-name">
-                             cmlanche
+                             cmlanche ${homepagehost}
                         </div>
                         <div class="wm-comment-user-content">
                             <p>${content}</p>

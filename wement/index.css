@@ -36,7 +36,7 @@
 .wm-user-headimage:hover{
     border-width: 1px;
     border-style: solid;
-    border-color: cadetblue;
+    border-color: #0e88eb;
 }
 
 .wm-content-textarea{
@@ -53,7 +53,7 @@
 }
 
 .wm-content-textarea:focus{
-    border-color: cadetblue;
+    border-color: #0e88eb;
 }
 
 .wm-commit{
@@ -108,8 +108,8 @@
     cursor: hand;
     background-color: white;
     border-width: 1px;
-    border-color: lightgrey;
-    color: lightgrey;
+    border-color: #0e88eb;
+    color: #0e88eb;
     height: 34px;
     width: 80px;
     margin-left: 16px;
@@ -128,13 +128,9 @@
     transition-duration: .3s;
 }
 .wm-add-comment-btn:hover{
-    background-color: lightgrey;
-    color: cadetblue;
-    border-color: cadetblue;
-}
-.wm-add-comment-btn:active{
-    background-color: cadetblue;
-    color: black;
+    background-color: #0e88eb;
+    color: white;
+    border-color: #0e88eb;
 }
 
 .wm-seperator{
@@ -160,6 +156,17 @@
     font-style: normal;
     font-weight: 700;
     color: #333;
+}
+
+.wm-user-name > a{
+    font-size: 12px;
+    text-decoration: none;
+    color: #989898;
+    font-weight: normal;
+}
+
+.wm-user-name > a:visited{
+    color: #989898;
 }
 
 .wm-comment-user-content{
