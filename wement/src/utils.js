@@ -1,5 +1,3 @@
-import { LS_ACCESS_TOKEN_KEY } from './constants'
-
 export const isString = s => toString.call(s) === '[object String]';
 
 export function getTargetContainer(container) {
@@ -13,28 +11,6 @@ export function getTargetContainer(container) {
   }
 
   return targetContainer
-}
-
-/**
- * 获取cookie
- * @param Name
- * @returns {string}
- */
-export function wm_getCookie(Name) {
-    var search = Name + "="//查询检索的值w
-    var returnvalue = "";//返回值
-    if (document.cookie.length > 0) {
-        let sd = document.cookie.indexOf(search);
-        if (sd!= -1) {
-            sd += search.length;
-            let end = document.cookie.indexOf(";", sd);
-            if (end == -1)
-                end = document.cookie.length;
-            //unescape() 函数可对通过 escape() 编码的字符串进行解码。
-            returnvalue=unescape(document.cookie.substring(sd, end))
-        }
-    }
-    return returnvalue;
 }
 
 export const Query = {
@@ -58,10 +34,17 @@ export const Query = {
 }
 
 function ajaxFactory(method) {
-  return function(apiPath, data = {}, base = 'http://localhost:9000') {
+    let product = false;
+    let baseurl;
+    if(product){
+        baseurl = "http://119.23.204.101";
+    }else{
+        baseurl = "http://localhost:9000";
+    }
+  return function(apiPath, data = {}, base = baseurl) {
     console.log(apiPath);
     const req = new XMLHttpRequest();
-    const token = wm_getCookie("wm_token");
+    const token = localStorage.getItem("wm-token");
 
     let url = `${base}${apiPath}`;
     let body = null;
