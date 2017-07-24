@@ -70,11 +70,20 @@
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__utils_js__ = __webpack_require__(1);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__autosize_js__ = __webpack_require__(2);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__autosize_js__ = __webpack_require__(3);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__autosize_js___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1__autosize_js__);
 
 
 
+
+let wm_debug = true;
+let wm_wement;
+let wm_appid;
+
+window.onload = function () {
+    init();
+    wm_run();
+};
 
 function init() {
     let userinput = wm_getUserInputHtml();
@@ -122,6 +131,15 @@ function wm_init_input(wm_input, isRoot) {
         wm_log("commit btn clicked");
         wm_addComment(e);
     };
+    document.querySelector(".wm-user-headimage").onclick = function (e) {
+        if (wm_wement) {
+            if (null != wm_wement.user.homepage && wm_wement.user.homepage != "") {
+                window.open(wm_wement.user.homepage, "_blank");
+            }
+        } else {
+            wm_requestAuth();
+        }
+    };
 
     __WEBPACK_IMPORTED_MODULE_1__autosize_js__(wm_textarea);
 }
@@ -129,7 +147,7 @@ function wm_init_input(wm_input, isRoot) {
 function wm_getUserInputHtml() {
     return `<div class="wm-input">
             <div class="wm-user">
-                <img class="wm-user-headimage" src="wm_default_headimage.jpg">
+                <img class="wm-user-headimage" src="github.png">
             </div>
             <div class="wm-textarea">
                    <textarea class="wm-content-textarea" rows="1" placeholder="写下你的评论..."></textarea>     
@@ -140,13 +158,6 @@ function wm_getUserInputHtml() {
             </div>
         </div>`;
 }
-
-let wm_debug = true;
-let wm_wement;
-let wm_appid;
-
-init();
-wm_run();
 
 function wm_run() {
     let hash = window.location.hash;
@@ -161,7 +172,7 @@ function wm_run() {
 
     wm_log(wm_token);
 
-    if (typeof wement == "undefined" || wm_token == undefined || typeof wement.appid == "undefined" || wement.appid == "") {
+    if (typeof wement == "undefined" || typeof wement.appid == "undefined" || wement.appid == "") {
         wm_appid = undefined;
     } else {
         wm_appid = wement.appid;
@@ -172,9 +183,6 @@ function wm_run() {
         if (wm_token) {
             wm_log("i got token, it is " + wm_token);
             wm_getWementInfo();
-        } else {
-            wm_log("no token yet, request it");
-            wm_requestAuth();
         }
     } else {
         alert("请设置wement.io的appid");
@@ -387,6 +395,8 @@ function wm_getWebsiteId() {
 
 "use strict";
 /* unused harmony export getTargetContainer */
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__config_js__ = __webpack_require__(2);
+
 const isString = s => toString.call(s) === '[object String]';
 /* unused harmony export isString */
 
@@ -424,14 +434,7 @@ const Query = {
 
 
 function ajaxFactory(method) {
-  let product = false;
-  let baseurl;
-  if (product) {
-    baseurl = "http://119.23.204.101";
-  } else {
-    baseurl = "http://localhost:9000";
-  }
-  return function (apiPath, data = {}, base = baseurl) {
+  return function (apiPath, data = {}, base = __WEBPACK_IMPORTED_MODULE_0__config_js__["a" /* getBaseUrl */]()) {
     console.log(apiPath);
     const req = new XMLHttpRequest();
     const token = localStorage.getItem("wm-token");
@@ -483,6 +486,46 @@ const http = {
 
 /***/ }),
 /* 2 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* unused harmony export getHost */
+/* unused harmony export getProtocal */
+/* harmony export (immutable) */ __webpack_exports__["a"] = getBaseUrl;
+/**
+ * Created by cmlanche on 2017/7/23.
+ */
+
+let product = false;
+let protocal = "http";
+let product_host = "119.23.204.101";
+let local_host = "localhost:9000";
+
+/**
+ * 获取主机地址
+ * @returns {*}
+ */
+function getHost() {
+    if (product) {
+        return product_host;
+    } else {
+        return local_host;
+    }
+}
+
+/**
+ * 协议
+ */
+function getProtocal() {
+    return protocal;
+}
+
+function getBaseUrl() {
+    return `${getProtocal()}://${getHost()}`;
+}
+
+/***/ }),
+/* 3 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!

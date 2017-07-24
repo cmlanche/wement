@@ -1,3 +1,4 @@
+import {getBaseUrl} from './config.js'
 export const isString = s => toString.call(s) === '[object String]';
 
 export function getTargetContainer(container) {
@@ -34,14 +35,7 @@ export const Query = {
 }
 
 function ajaxFactory(method) {
-    let product = false;
-    let baseurl;
-    if(product){
-        baseurl = "http://119.23.204.101";
-    }else{
-        baseurl = "http://localhost:9000";
-    }
-  return function(apiPath, data = {}, base = baseurl) {
+  return function(apiPath, data = {}, base = getBaseUrl()) {
     console.log(apiPath);
     const req = new XMLHttpRequest();
     const token = localStorage.getItem("wm-token");

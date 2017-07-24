@@ -2,6 +2,15 @@
 import {http, wm_getCookie} from './utils.js'
 import * as autosize from './autosize.js';
 
+let wm_debug = true;
+let wm_wement;
+let wm_appid;
+
+window.onload = function () {
+    init();
+    wm_run();
+};
+
 function init() {
     let userinput = wm_getUserInputHtml();
     let html = `<div class="wm-comment-header">
@@ -48,6 +57,15 @@ function wm_init_input(wm_input, isRoot) {
         wm_log("commit btn clicked");
         wm_addComment(e);
     };
+    document.querySelector(".wm-user-headimage").onclick = function (e) {
+        if(wm_wement){
+            if(null != wm_wement.user.homepage && wm_wement.user.homepage != ""){
+                window.open(wm_wement.user.homepage, "_blank");
+            }
+        }else{
+            wm_requestAuth();
+        }
+    };
 
     autosize(wm_textarea);
 }
@@ -55,7 +73,7 @@ function wm_init_input(wm_input, isRoot) {
 function wm_getUserInputHtml() {
     return `<div class="wm-input">
             <div class="wm-user">
-                <img class="wm-user-headimage" src="wm_default_headimage.jpg">
+                <img class="wm-user-headimage" src="github.png">
             </div>
             <div class="wm-textarea">
                    <textarea class="wm-content-textarea" rows="1" placeholder="写下你的评论..."></textarea>     
@@ -66,13 +84,6 @@ function wm_getUserInputHtml() {
             </div>
         </div>`;
 }
-
-let wm_debug = true;
-let wm_wement;
-let wm_appid;
-
-init();
-wm_run();
 
 function wm_run() {
     let hash = window.location.hash;
@@ -87,7 +98,7 @@ function wm_run() {
 
     wm_log(wm_token);
 
-    if((typeof wement) == "undefined" || (wm_token == undefined)
+    if((typeof wement) == "undefined"
         || (typeof wement.appid) == "undefined" || wement.appid == ""){
         wm_appid = undefined;
     }else{
@@ -99,9 +110,6 @@ function wm_run() {
         if(wm_token){
             wm_log("i got token, it is " + wm_token);
             wm_getWementInfo();
-        } else {
-            wm_log("no token yet, request it");
-            wm_requestAuth();
         }
     }else{
         alert("请设置wement.io的appid");
