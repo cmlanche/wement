@@ -1,5 +1,5 @@
 
-import {http, wm_getCookie} from './utils.js'
+import {http, wm_getCookie, getQueryString} from './utils.js'
 import * as autosize from './autosize.js';
 
 let wm_debug = true;
@@ -86,15 +86,12 @@ function wm_getUserInputHtml() {
 }
 
 function wm_run() {
-    let hash = window.location.hash;
-    if(hash != undefined && hash != ""){
-        hash = hash.substring(1, hash.length);
-        localStorage.setItem("wm-token", hash);
-        location.replace(location.pathname + location.search);
-        return
+    let wm_token = getQueryString("wm-token");
+    if(wm_token == undefined || wm_token == null || wm_token == ""){
+        wm_token = localStorage.getItem("wm-token");
+    }else{
+        localStorage.setItem("wm-token", wm_token);
     }
-
-    let wm_token = localStorage.getItem("wm-token");
 
     wm_log(wm_token);
 

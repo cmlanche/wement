@@ -160,15 +160,12 @@ function wm_getUserInputHtml() {
 }
 
 function wm_run() {
-    let hash = window.location.hash;
-    if (hash != undefined && hash != "") {
-        hash = hash.substring(1, hash.length);
-        localStorage.setItem("wm-token", hash);
-        location.replace(location.pathname + location.search);
-        return;
+    let wm_token = __WEBPACK_IMPORTED_MODULE_0__utils_js__["a" /* getQueryString */]("wm-token");
+    if (wm_token == undefined || wm_token == null || wm_token == "") {
+        wm_token = localStorage.getItem("wm-token");
+    } else {
+        localStorage.setItem("wm-token", wm_token);
     }
-
-    let wm_token = localStorage.getItem("wm-token");
 
     wm_log(wm_token);
 
@@ -195,7 +192,7 @@ function wm_run() {
 function wm_requestAuth() {
     let path = document.location.origin + document.location.pathname;
     wm_log(path);
-    __WEBPACK_IMPORTED_MODULE_0__utils_js__["a" /* http */].get(`/login/github/` + encodeURIComponent(path)).then(authurl => {
+    __WEBPACK_IMPORTED_MODULE_0__utils_js__["b" /* http */].get(`/login/github/` + encodeURIComponent(path)).then(authurl => {
         window.location.href = authurl;
     });
 }
@@ -204,7 +201,7 @@ function wm_requestAuth() {
  * 获取用户信息
  */
 function wm_getWementInfo() {
-    __WEBPACK_IMPORTED_MODULE_0__utils_js__["a" /* http */].post("/wementinfo", { "appid": wm_appid, "domain": document.location.host }).then(data => {
+    __WEBPACK_IMPORTED_MODULE_0__utils_js__["b" /* http */].post("/wementinfo", { "appid": wm_appid, "domain": document.location.host }).then(data => {
         if (data) {
             wm_setWementInfo(data);
         }
@@ -252,7 +249,7 @@ function wm_addComment(e) {
             alert("评论内容不能为空");
             return;
         }
-        __WEBPACK_IMPORTED_MODULE_0__utils_js__["a" /* http */].post("/comment/add", {
+        __WEBPACK_IMPORTED_MODULE_0__utils_js__["b" /* http */].post("/comment/add", {
             "websiteId": wm_getWebsiteId(),
             "domain": document.location.host,
             "postUrl": document.location.href,
@@ -279,7 +276,7 @@ function wm_addComment(e) {
 window.wm_delComment = function (e, id) {
     let confirm = window.confirm("确定要删除这条评论吗？");
     if (confirm) {
-        __WEBPACK_IMPORTED_MODULE_0__utils_js__["a" /* http */].post("/comment/delete", {
+        __WEBPACK_IMPORTED_MODULE_0__utils_js__["b" /* http */].post("/comment/delete", {
             "id": id
         }).then(res => {
             if (res.code == 0) {
@@ -317,7 +314,7 @@ window.wm_feedback = function (e, id) {
  */
 function wm_getComments() {
     if (wm_wement) {
-        __WEBPACK_IMPORTED_MODULE_0__utils_js__["a" /* http */].post("/comments/list", {
+        __WEBPACK_IMPORTED_MODULE_0__utils_js__["b" /* http */].post("/comments/list", {
             "websiteId": wm_getWebsiteId(),
             "postUrl": document.location.href
         }).then(res => {
@@ -395,6 +392,7 @@ function wm_getWebsiteId() {
 
 "use strict";
 /* unused harmony export getTargetContainer */
+/* harmony export (immutable) */ __webpack_exports__["a"] = getQueryString;
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__config_js__ = __webpack_require__(2);
 
 const isString = s => toString.call(s) === '[object String]';
@@ -481,8 +479,14 @@ const http = {
   delete: ajaxFactory('DELETE'),
   put: ajaxFactory('PUT')
 };
-/* harmony export (immutable) */ __webpack_exports__["a"] = http;
+/* harmony export (immutable) */ __webpack_exports__["b"] = http;
 
+
+function getQueryString(name) {
+  let reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)", "i");
+  let r = window.location.search.substr(1).match(reg);
+  if (r != null) return unescape(r[2]);return null;
+}
 
 /***/ }),
 /* 2 */
