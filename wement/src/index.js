@@ -128,7 +128,10 @@ function wm_requestAuth() {
  * 获取用户信息
  */
 function wm_getWementInfo() {
-    http.post("/wementinfo", {"appid": wm_appid, "domain": document.location.host}).then(data=>{
+    http.post("/wementinfo", {
+        "appid": wm_appid,
+        "domain": document.location.host
+    }).then(data=>{
         if(data){
             wm_setWementInfo(data);
         }
@@ -181,7 +184,10 @@ function wm_addComment(e) {
             "domain": document.location.host,
             "postUrl": document.location.href,
             "content": content,
-            "parent": id
+            "parent": id,
+            "identifier": wement.identifier,
+            "title": "this is test title",
+            "desc": "this is test desc for the post"
         }).then(res=>{
             if(res.code == 0){
                 wm_log("add comment success");
@@ -244,7 +250,8 @@ function wm_getComments() {
     if(wm_wement){
         http.post("/comments/list", {
             "websiteId": wm_getWebsiteId(),
-            "postUrl": document.location.href
+            "postUrl": document.location.href,
+            "identifier": wement.identifier
         }).then(res=>{
             if(res.code == 0){
                 let dom_comment = document.getElementById("wm_comment");
