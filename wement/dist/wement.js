@@ -78,7 +78,6 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
 let wm_debug = true;
 let wm_wement;
-let wm_appid;
 
 window.onload = function () {
     init();
@@ -169,6 +168,7 @@ function wm_run() {
 
     wm_log(wm_token);
 
+    let wm_appid;
     if (typeof wement == "undefined" || typeof wement.appid == "undefined" || wement.appid == "") {
         wm_appid = undefined;
     } else {
@@ -198,17 +198,27 @@ function wm_requestAuth() {
 }
 
 /**
- * 获取用户信息
+ * 获取用户、网站、文章信息
  */
 function wm_getWementInfo() {
+    let postUrl;
+    if (__WEBPACK_IMPORTED_MODULE_0__utils_js__["c" /* isEmpty */](wement.postUrl)) {
+        postUrl = window.location.href;
+    } else {
+        postUrl = wement.postUrl;
+    }
     __WEBPACK_IMPORTED_MODULE_0__utils_js__["b" /* http */].post("/wementinfo", {
-        "appid": wm_appid,
-        "domain": document.location.host
+        "appid": wement.appid,
+        "identifier": wement.identifier,
+        "title": wement.title,
+        "desc": wement.desc,
+        "content": wement.content,
+        "postUrl": postUrl
     }).then(data => {
+        wm_log(data);
         if (data) {
             wm_setWementInfo(data);
         }
-        wm_log(data);
     });
 }
 
@@ -253,14 +263,9 @@ function wm_addComment(e) {
             return;
         }
         __WEBPACK_IMPORTED_MODULE_0__utils_js__["b" /* http */].post("/comment/add", {
-            "websiteId": wm_getWebsiteId(),
-            "domain": document.location.host,
-            "postUrl": document.location.href,
+            "postid": wm_wement.post.id,
             "content": content,
-            "parent": id,
-            "identifier": wement.identifier,
-            "title": "this is test title",
-            "desc": "this is test desc for the post"
+            "parent": id
         }).then(res => {
             if (res.code == 0) {
                 wm_log("add comment success");
@@ -400,6 +405,7 @@ function wm_getWebsiteId() {
 "use strict";
 /* unused harmony export getTargetContainer */
 /* harmony export (immutable) */ __webpack_exports__["a"] = getQueryString;
+/* harmony export (immutable) */ __webpack_exports__["c"] = isEmpty;
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__config_js__ = __webpack_require__(2);
 
 const isString = s => toString.call(s) === '[object String]';
@@ -493,6 +499,11 @@ function getQueryString(name) {
   let reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)", "i");
   let r = window.location.search.substr(1).match(reg);
   if (r != null) return unescape(r[2]);return null;
+}
+
+function isEmpty(str) {
+  if (undefined == str || "" == str) return true;
+  return false;
 }
 
 /***/ }),

@@ -19,8 +19,18 @@
     <script>
       var isDebug = true;
         wement = {
-            appid: "490b6d6f03e8c262f584605d5d25e12d", /*网站的应用ID*/
-            identifier: "helloworld"  /*文章的唯一标识字符串*/
+            /*网站的应用ID*/
+            appid: "490b6d6f03e8c262f584605d5d25e12d",
+            /*文章的唯一标识字符串*/
+            identifier: "helloworld",
+            //文章标题
+            title: "test title",
+            // 简短描述
+            desc: "test description",
+            // 文章内容
+            content: "test post content",
+            // 文章链接
+            postUrl: window.location.href,
         };
         if(isDebug){ // 测试的appid
             wement.appid = "8659f72674440553f1ee7890cc25a4b1";

@@ -89,3 +89,8 @@ export function getQueryString(name) {
     let r = window.location.search.substr(1).match(reg);
     if (r != null) return unescape(r[2]); return null;
 }
+
+export function isEmpty(str) {
+    if(undefined == str || "" == str) return true;
+    return false;
+}

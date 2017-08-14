@@ -1,10 +1,9 @@
 
-import {http, wm_getCookie, getQueryString} from './utils.js'
+import {http, wm_getCookie, getQueryString, isEmpty} from './utils.js'
 import * as autosize from './autosize.js';
 
 let wm_debug = true;
 let wm_wement;
-let wm_appid;
 
 window.onload = function () {
     init();
@@ -95,6 +94,7 @@ function wm_run() {
 
     wm_log(wm_token);
 
+    let wm_appid;
     if((typeof wement) == "undefined"
         || (typeof wement.appid) == "undefined" || wement.appid == ""){
         wm_appid = undefined;
@@ -125,17 +125,27 @@ function wm_requestAuth() {
 }
 
 /**
- * 获取用户信息
+ * 获取用户、网站、文章信息
  */
 function wm_getWementInfo() {
+    let postUrl;
+    if(isEmpty(wement.postUrl)){
+        postUrl = window.location.href;
+    } else {
+        postUrl = wement.postUrl;
+    }
     http.post("/wementinfo", {
-        "appid": wm_appid,
-        "domain": document.location.host
+        "appid": wement.appid,
+        "identifier": wement.identifier,
+        "title": wement.title,
+        "desc": wement.desc,
+        "content": wement.content,
+        "postUrl": postUrl,
     }).then(data=>{
+        wm_log(data);
         if(data){
             wm_setWementInfo(data);
         }
-        wm_log(data);
     })
 }
 
@@ -180,14 +190,9 @@ function wm_addComment(e) {
             return
         }
         http.post("/comment/add", {
-            "websiteId": wm_getWebsiteId(),
-            "domain": document.location.host,
-            "postUrl": document.location.href,
+            "postid": wm_wement.post.id,
             "content": content,
             "parent": id,
-            "identifier": wement.identifier,
-            "title": "this is test title",
-            "desc": "this is test desc for the post"
         }).then(res=>{
             if(res.code == 0){
                 wm_log("add comment success");
