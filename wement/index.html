@@ -17,10 +17,14 @@
     <div id="wm_comment">
     </div>
     <script>
+      var isDebug = true;
         wement = {
-            appid: "8659f72674440553f1ee7890cc25asdfhkfjh2388",
-            identifier: "helloworld"
+            appid: "490b6d6f03e8c262f584605d5d25e12d", /*网站的应用ID*/
+            identifier: "helloworld"  /*文章的唯一标识字符串*/
         };
+        if(isDebug){ // 测试的appid
+            wement.appid = "8659f72674440553f1ee7890cc25a4b1";
+        }
     </script>
     <script src="./dist/wement.js"></script>
   </body>

@@ -4,7 +4,7 @@
 
 let product = false;
 let protocal = "http";
-let product_host = "119.23.204.101";
+let product_host = "119.23.204.101:9000";
 let local_host = "localhost:9000";
 
 /**
