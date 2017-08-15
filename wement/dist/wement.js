@@ -358,7 +358,7 @@ function wm_ui_addcomment(e, comment) {
     // 添加头像
     let dom_comment_user = document.createElement("div");
     dom_comment_user.className = "wm-user";
-    dom_comment_user.innerHTML = `<a href="${comment.homepage}" target="_blank"><img class="wm-user-headimage" src="${wm_wement.user.headimage}"></a>`;
+    dom_comment_user.innerHTML = `<a href="${comment.homepage}" target="_blank"><img class="wm-user-headimage" src="${comment.headimage}"></a>`;
 
     // 添加评论内容
     let dom_comment_content = document.createElement("div");
@@ -375,7 +375,7 @@ function wm_ui_addcomment(e, comment) {
         homepagehost = `<a href='${comment.homepage}' target="_blank">${comment.homepagehost}</a>`;
     }
     dom_comment_content.innerHTML = `<div class="wm-user-name">
-                             cmlanche ${homepagehost}
+                             ${comment.nickname} ${homepagehost}
                         </div>
                         <div class="wm-comment-user-content">
                             <p>${content}</p>
